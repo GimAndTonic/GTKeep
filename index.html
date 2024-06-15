@@ -15,6 +15,10 @@
             background-color: #f9f9f9;
             margin-top: 20px;
         }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -22,7 +26,6 @@
     <div id="file-list">Loading file list...</div>
     <div id="content">Select a file to load content...</div>
 
-    <!-- Use a specific version of marked library -->
     <script src="https://cdn.jsdelivr.net/npm/marked@4.0.12/marked.min.js"></script>
     <script>
         // Function to load the list of files in the current directory
