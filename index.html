@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Markdown from File</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #content, #file-list {
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #f9f9f9;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Load Markdown from File</h1>
+    <div id="file-list">Loading file list...</div>
+    <div id="content">Select a file to load content...</div>
+
+    <!-- Use a specific version of marked library -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.12/marked.min.js"></script>
+    <script>
+        // Function to load the list of files in the current directory
+        function loadFileList() {
+            fetch('/list-files')
+                .then(response => response.json())
+                .then(files => {
+                    const fileListDiv = document.getElementById('file-list');
+                    if (files.length > 0) {
+                        const list = document.createElement('ul');
+                        files.forEach(file => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = file;
+                            listItem.style.cursor = 'pointer';
+                            listItem.onclick = () => loadContent(file);
+                            list.appendChild(listItem);
+                        });
+                        fileListDiv.innerHTML = '';
+                        fileListDiv.appendChild(list);
+                    } else {
+                        fileListDiv.textContent = 'No files found in the directory.';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('file-list').innerHTML = 'Error loading file list: ' + error;
+                });
+        }
+
+        // Function to load the content from the selected file
+        function loadContent(filename) {
+            fetch(`/${filename}`)
+                .then(response => response.text())
+                .then(data => {
+                    const contentDiv = document.getElementById('content');
+                    if (filename.endsWith('.md')) {
+                        contentDiv.innerHTML = marked.parse(data);
+                    } else {
+                        contentDiv.innerHTML = data;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('content').innerHTML = 'Error loading content: ' + error;
+                });
+        }
+
+        // Load the file list when the page is loaded
+        window.onload = loadFileList;
+    </script>
+</body>
+</html>
+
