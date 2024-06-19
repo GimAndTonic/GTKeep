@@ -7,13 +7,36 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            display: flex;
+            height: 100vh;
+            margin: 0;
         }
-        #content, #file-list {
-            border: 1px solid #ccc;
+        .sidebar {
+            width: 20%;
             padding: 20px;
             background-color: #f9f9f9;
-            margin-top: 20px;
+            border-right: 1px solid #ccc;
+            overflow-y: auto;
+        }
+        .content {
+            width: 80%;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        h1 {
+            font-size: 1.5em;
+            margin: 20px 0;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 10px;
+            cursor: pointer;
+        }
+        li:hover {
+            background-color: #eee;
         }
         img {
             max-width: 100%;
@@ -22,9 +45,14 @@
     </style>
 </head>
 <body>
-    <h1>Load Markdown from File</h1>
-    <div id="file-list">Loading file list...</div>
-    <div id="content">Select a file to load content...</div>
+    <div class="sidebar">
+        <h1>Files</h1>
+        <div id="file-list">Loading file list...</div>
+    </div>
+    <div class="content">
+        <h1>Load Markdown from File</h1>
+        <div id="content">Select a file to load content...</div>
+    </div>
 
     <!-- Load the Marked library from jsDelivr CDN to translate MarkDown to HTML-->
     <script src="https://cdn.jsdelivr.net/npm/marked@4.0.12/marked.min.js"></script>
@@ -42,7 +70,6 @@
                         files.forEach(file => {
                             const listItem = document.createElement('li');
                             listItem.textContent = file;
-                            listItem.style.cursor = 'pointer';
                             listItem.onclick = () => loadContent(file);
                             list.appendChild(listItem);
                         });
@@ -79,4 +106,3 @@
     </script>
 </body>
 </html>
-
