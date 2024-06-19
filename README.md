@@ -26,3 +26,5 @@ Don't forget
 ```
 chmod +x bin/server
 ```
+
+VERION 0.2
