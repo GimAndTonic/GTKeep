@@ -1,0 +1,63 @@
+#!/bin/bash
+
+COMMAND=$1
+
+BUILD=false
+
+if [ $# -gt 1 ]
+then
+    if [ "$2" == "--build" ]
+    then
+        echo "Enable rebuild server"
+        BUILD=true
+    fi
+fi
+
+start_server() {
+    # Create the var/logs directory if it doesn't exist
+    mkdir -p var/logs
+
+    # Start the server, redirect logs, and move to background
+    node src/server.js >> var/logs/server.log &
+    tail -n 1 var/logs/server.log
+}
+
+build_project() {
+    npm init -y
+    npm install express 
+}
+
+stop_server() {
+    PID=$(ps | grep server.js | grep -v grep | awk '{print $1}')
+    echo "Killing $PID"
+    kill $PID
+}
+
+case $COMMAND in
+    start)
+        echo "Starting server"
+
+        if $BUILD
+        then
+            echo "Rebuild server..."
+            build_project
+        else
+            echo "Start server from pre-build"
+        fi
+
+        start_server
+        ;;
+    clean)
+        echo "Clean server files"
+        rm -vf package.json
+        rm -vf package-lock.json
+        rm -rvf node_modules
+        echo "done"
+        ;;        
+    stop)
+        stop_server
+        ;;
+  *)
+    echo "Usage: $0 {start|clean|stop}"
+    exit 1
+esac

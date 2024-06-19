@@ -2,3 +2,7 @@ node_modules/
 package.json
 package-lock.json
 notes/*
+media/*
+!notes/
+!media/
+var/

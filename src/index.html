@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Markdown from File</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+        .sidebar {
+            width: 20%;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-right: 1px solid #ccc;
+            overflow-y: auto;
+        }
+        .content {
+            width: 80%;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        h1 {
+            font-size: 1.5em;
+            margin: 20px 0;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 10px;
+            cursor: pointer;
+        }
+        li:hover {
+            background-color: #eee;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1>Files</h1>
+        <div id="file-list">Loading file list...</div>
+    </div>
+    <div class="content">
+        <h1>Load Markdown from File</h1>
+        <div id="content">Select a file to load content...</div>
+    </div>
+
+    <!-- Load the Marked library from jsDelivr CDN to translate MarkDown to HTML-->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.12/marked.min.js"></script>
+
+    <!-- Load all files in the notes directory -->
+    <script>
+        async function loadFileList() {
+            try {
+                const response = await fetch('/list-files');
+                const files = await response.json();
+                const fileListDiv = document.getElementById('file-list');
+                if (files.length > 0) {
+                    const list = document.createElement('ul');
+                    files.forEach(file => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = file;
+                        listItem.onclick = () => loadContent(file);
+                        list.appendChild(listItem);
+                    });
+                    fileListDiv.innerHTML = '';
+                    fileListDiv.appendChild(list);
+                } else {
+                    fileListDiv.textContent = 'No files found in the directory.';
+                }
+            } catch (error) {
+                document.getElementById('file-list').innerHTML = 'Error loading file list: ' + error;
+            }
+        }
+
+        function adjustImagePaths(markdown, directory) {
+            return markdown.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, src) => {
+                if (!src.startsWith('http') && !src.startsWith('/')) {
+                    src = `${directory}/${src}`;
+                }
+                return `![${alt}](${src})`;
+            });
+        }
+
+        async function loadContent(filename) {
+            try {
+                const response = await fetch(`notes/${filename}`);
+                const data = await response.text();
+                const contentDiv = document.getElementById('content');
+                if (filename.endsWith('.md')) {
+                    const adjustedData = adjustImagePaths(data, 'notes');
+                    contentDiv.innerHTML = marked.parse(adjustedData);
+                } else {
+                    contentDiv.innerHTML = data;
+                }
+            } catch (error) {
+                document.getElementById('content').innerHTML = 'Error loading content: ' + error;
+            }
+        }
+
+        window.onload = loadFileList;
+    </script>
+</body>
+</html>
