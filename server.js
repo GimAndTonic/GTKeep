@@ -24,10 +24,20 @@ function listFilesInDirectory(directory) {
 // Endpoint to list files in the current directory and the notes directory
 app.get('/list-files', async (req, res) => {
     try {
-        const currentDirFiles = await listFilesInDirectory(__dirname);
-        const notesDirFiles = await listFilesInDirectory(path.join(__dirname, 'notes'));
-        const allFiles = currentDirFiles.concat(notesDirFiles).map(file => path.relative(__dirname, file));
-        res.json(allFiles.filter(file => file.endsWith('.html') || file.endsWith('.md')));
+        // Load samples
+        // samplesDirFiles = await listFilesInDirectory(path.join(__dirname, 'samples'));
+        // samplesDirFiles = samplesDirFiles.map(file => path.relative(__dirname, file));
+
+        // Load files from notes
+        const path_notes = path.join(__dirname, 'notes')
+        notesDirFiles = await listFilesInDirectory(path_notes)
+        notesDirFiles = notesDirFiles.map(file => path.relative(path_notes, file));
+        //notesDirFiles = notesDirFiles.map(file => path.parse(file).name); // Disable .md filter if used
+        
+
+        // Join lists
+        const allFiles = notesDirFiles;
+        res.json(allFiles.filter(file => file.endsWith('.html') || file.endsWith('.md') || file.endsWith('.txt')));
     } catch (err) {
         res.status(500).json({ error: 'Unable to list files' });
     }

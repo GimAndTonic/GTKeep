@@ -86,7 +86,7 @@
 
         // Function to load the content from the selected file
         function loadContent(filename) {
-            fetch(`/${filename}`)
+            fetch(`notes/${filename}`)
                 .then(response => response.text())
                 .then(data => {
                     const contentDiv = document.getElementById('content');
