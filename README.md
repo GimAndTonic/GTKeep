@@ -1,9 +1,10 @@
-Start the server:
-```
-npm init -y
-npm install express
-node server.js
-```
+# README
+
+## Start
+Use `/bin/server start --build`
+
+## Stop
+`/bin/server stop` kills the process with `server.js`. Don't run the command if running more independed process with a similar name. 
 
 
 ## Folder structure
