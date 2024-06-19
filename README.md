@@ -16,6 +16,8 @@ project-root/
 │   ├── notes/
 │   │   └── *.md (Markdown files)
 │   └── server.js
+├── notes/
+├── media/
 ├── package.json
 └── node_modules/
 ```

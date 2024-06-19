@@ -23,6 +23,7 @@ start_server() {
 }
 
 build_project() {
+    mkdir -p notes media
     npm init -y
     npm install express 
 }
